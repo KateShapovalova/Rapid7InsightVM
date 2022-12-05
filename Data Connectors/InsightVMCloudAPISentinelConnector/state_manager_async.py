@@ -48,7 +48,7 @@ class StateManagerAsync:
     async def get_last_date_from_storage(self) -> Optional[datetime.datetime]:
         s = await self.get()
         try:
-            date = parse_date(s) - (datetime.timedelta(minutes=DELAY) + datetime.timedelta(minutes=SHIFT))
+            date = parse_date(s) - (datetime.timedelta(minutes=int(DELAY)) + datetime.timedelta(minutes=int(SHIFT)))
         except Exception:
             date = None
         return date
@@ -60,7 +60,7 @@ class StateManagerAsync:
 
     async def save_last_date_to_storage(self) -> None:
         if isinstance(self._last_date, datetime.datetime):
-            self._last_date -= datetime.timedelta(minutes=SHIFT)
+            self._last_date -= datetime.timedelta(minutes=int(SHIFT))
             date_str = self._last_date.isoformat()
             await self.post(date_str)
             logging.info(f'Saved end_time - {date_str}')

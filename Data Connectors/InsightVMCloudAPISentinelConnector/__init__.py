@@ -24,10 +24,8 @@ WORKSPACE_ID = os.environ['WorkspaceID']
 SHARED_KEY = os.environ['WorkspaceKey']
 AZURE_WEB_JOBS_STORAGE_CONNECTION_STRING = os.environ['AzureWebJobsStorage']
 
-DELAY = os.environ['DelayTime']
-SHIFT = os.environ['ShiftTime']
-
-print(int(DELAY))
+DELAY = os.environ.get('DelayTime', "60")
+SHIFT = os.environ.get('ShiftTime', "60")
 
 
 LOG_TYPE_ASSETS = 'NexposeInsightVMCloud_assets'
