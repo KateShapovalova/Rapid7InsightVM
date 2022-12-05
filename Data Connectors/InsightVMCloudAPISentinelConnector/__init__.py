@@ -70,6 +70,7 @@ class InsightVMAPI:
         cursor = None
         while True:
             res = await self._make_get_assets_request(cursor, start_time=start_time)
+            logging.info(f'start_time: {start_time}')
             assets = res['data']
             logging.info(f'Assets found: {len(assets)}')
             yield assets
