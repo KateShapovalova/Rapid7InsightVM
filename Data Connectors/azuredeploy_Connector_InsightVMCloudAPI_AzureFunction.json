@@ -166,7 +166,7 @@
                         "InsightVMAPIKey": "[parameters('InsightVMAPIKey')]",
                         "InsightVMCloudRegion": "[parameters('InsightVMCloudRegion')]",
                         "logAnalyticsUri": "[variables('LogAnaltyicsUri')]",
-                        "WEBSITE_RUN_FROM_PACKAGE": "https://aka.ms/sentinel-InsightVMCloudAPI-functionapp"
+                        "WEBSITE_RUN_FROM_PACKAGE": "https://github.com/KateShapovalova/Rapid7InsightVM/raw/master/Data%20Connectors/InsightVMCloudAPISentinelConn.zip"
                     }
                 }
             ]
