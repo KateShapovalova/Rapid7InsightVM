@@ -5,7 +5,10 @@ from typing import Optional
 import datetime
 from dateutil.parser import parse as parse_date
 import logging
-from .__init__ import SHIFT, DELAY
+import os
+
+DELAY = os.environ.get('DelayTime', "60")
+SHIFT = os.environ.get('ShiftTime', "60")
 
 
 class StateManagerAsync:

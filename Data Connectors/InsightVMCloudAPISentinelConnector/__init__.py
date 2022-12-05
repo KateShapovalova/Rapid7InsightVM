@@ -24,9 +24,6 @@ WORKSPACE_ID = os.environ['WorkspaceID']
 SHARED_KEY = os.environ['WorkspaceKey']
 AZURE_WEB_JOBS_STORAGE_CONNECTION_STRING = os.environ['AzureWebJobsStorage']
 
-DELAY = os.environ.get('DelayTime', "60")
-SHIFT = os.environ.get('ShiftTime', "60")
-
 
 LOG_TYPE_ASSETS = 'NexposeInsightVMCloud_assets'
 LOG_TYPE_VULNS = 'NexposeInsightVMCloud_vulnerabilities'
@@ -91,10 +88,13 @@ class InsightVMAPI:
         }
         if cursor:
             params['cursor'] = cursor
-        date = start_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + 'Z'
-        payload = {
-            'asset': f'last_scan_end > {date}'
-        }
+        if isinstance(start_time, datetime.datetime):
+            date = start_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + 'Z'
+            payload = {
+                'asset': f'last_scan_end > {date}'
+            }
+        else:
+            payload = None
         res = await self._make_api_request(method=method, endpoint=endpoint, params=params, payload=payload)
         res = res if res else {}
         return res
