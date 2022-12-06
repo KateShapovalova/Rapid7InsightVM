@@ -91,7 +91,7 @@ class InsightVMAPI:
         if isinstance(start_time, datetime.datetime):
             date = start_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + 'Z'
             payload = {
-                'asset': f'last_scan_end > {date} and last_scan_end < {CURRENT_TIME - datetime.timedelta(minutes=int(DELAY))}'
+                'asset': f'last_scan_end > {date} && last_scan_end < {CURRENT_TIME - datetime.timedelta(minutes=int(DELAY))}'
             }
         else:
             payload = None
