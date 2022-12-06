@@ -91,13 +91,25 @@ class InsightVMAPI:
         if isinstance(start_time, datetime.datetime):
             date = start_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + 'Z'
             payload = {
-                'asset': f'{CURRENT_TIME - datetime.timedelta(minutes=int(DELAY))} > last_scan_end > {date}'
+                'asset': f'last_scan_end > {date}'
             }
         else:
             payload = None
         res = await self._make_api_request(method=method, endpoint=endpoint, params=params, payload=payload)
-        res = res if res else {}
-        return res
+
+        delay_res = []
+        if res:
+            for event in res["data"]:
+                if parse_date(event["last_scan_end"]) < CURRENT_TIME - datetime.timedelta(minutes=int(DELAY)):
+                    delay_res.append(event)
+        else:
+            res = {}
+
+        filtered_res = res
+        filtered_res["data"] = delay_res
+
+        # res = res if res else {}
+        return filtered_res
 
     async def get_all_vulners(self) -> dict:
         logging.info('Start getting vulners.')

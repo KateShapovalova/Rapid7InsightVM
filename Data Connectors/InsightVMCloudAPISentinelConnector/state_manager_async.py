@@ -6,10 +6,12 @@ import datetime
 from dateutil.parser import parse as parse_date
 import logging
 import os
+from pytz import timezone
+
 
 DELAY = os.environ.get('Delay', "60")
 SHIFT_START_TIME = os.environ.get('ShiftStartTime', "60")
-CURRENT_TIME = datetime.datetime.now()
+CURRENT_TIME = timezone('UTC').localize(datetime.datetime.now())
 
 
 class StateManagerAsync:
