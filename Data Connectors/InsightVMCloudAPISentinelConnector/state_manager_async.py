@@ -9,7 +9,8 @@ import os
 
 DELAY = os.environ.get('Delay', "60")
 SHIFT_START_TIME = os.environ.get('ShiftStartTime', "60")
-CURRENT_TIME = datetime.datetime.now()
+#TODO: убрать после дебага
+CURRENT_TIME = datetime.datetime.now() - datetime.timedelta(days=365)
 
 
 class StateManagerAsync:
@@ -54,9 +55,10 @@ class StateManagerAsync:
         s = await self.get()
         try:
             date = parse_date(s)
-            if date < CURRENT_TIME - datetime.timedelta(days=7):
-                logging.info(f'The last saved time was long ago, trying to get events for the last week.')
-                date = CURRENT_TIME - datetime.timedelta(days=7)
+            # TODO: добавить после дебага
+            # if date < CURRENT_TIME - datetime.timedelta(days=7):
+            #     logging.info(f'The last saved time was long ago, trying to get events for the last week.')
+            #     date = CURRENT_TIME - datetime.timedelta(days=7)
         except Exception:
             date = CURRENT_TIME - (
                         datetime.timedelta(minutes=int(DELAY)) + datetime.timedelta(minutes=int(SHIFT_START_TIME)))
