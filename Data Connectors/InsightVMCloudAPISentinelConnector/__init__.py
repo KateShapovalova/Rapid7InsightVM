@@ -11,7 +11,7 @@ from dateutil.parser import parse as parse_date
 
 
 from .sentinel_connector_async import AzureSentinelConnectorAsync
-from .state_manager_async import StateManagerAsync
+from .state_manager_async import StateManagerAsync, CURRENT_TIME, DELAY
 
 
 logging.getLogger('azure.core.pipeline.policies.http_logging_policy').setLevel(logging.ERROR)
@@ -24,13 +24,11 @@ WORKSPACE_ID = os.environ['WorkspaceID']
 SHARED_KEY = os.environ['WorkspaceKey']
 AZURE_WEB_JOBS_STORAGE_CONNECTION_STRING = os.environ['AzureWebJobsStorage']
 
-
 LOG_TYPE_ASSETS = 'NexposeInsightVMCloud_assets'
 LOG_TYPE_VULNS = 'NexposeInsightVMCloud_vulnerabilities'
 
 VULNERS_API_REQUEST_CHUNK_SIZE = 50
 ASSETS_API_REQUSET_CHUNK_SIZE = 500
-
 
 LOG_ANALYTICS_URI = os.environ.get('logAnalyticsUri')
 
@@ -51,6 +49,7 @@ async def main(mytimer: func.TimerRequest):
             sentinel = AzureSentinelConnectorAsync(session=session_sentinel, log_analytics_uri=LOG_ANALYTICS_URI, workspace_id=WORKSPACE_ID, shared_key=SHARED_KEY)
             state_manager = StateManagerAsync(connection_string=AZURE_WEB_JOBS_STORAGE_CONNECTION_STRING, file_path='rapid7_last_scan_date')
             start_time = await state_manager.get_last_date_from_storage()
+            logging.info(f'Data processing. Period(UTC): {start_time} - {CURRENT_TIME - datetime.timedelta(minutes=int(DELAY))}')
             async for assets in api.get_assets(start_time=start_time):
                 last_processed_date = await process_assets(assets=assets, api=api, sentinel=sentinel, state_manager=state_manager)
                 state_manager.remember_last_date(last_processed_date)
@@ -92,7 +91,7 @@ class InsightVMAPI:
         if isinstance(start_time, datetime.datetime):
             date = start_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + 'Z'
             payload = {
-                'asset': f'last_scan_end > {date}'
+                'asset': f'last_scan_end > {date} and last_scan_end < {CURRENT_TIME - datetime.timedelta(minutes=int(DELAY))}'
             }
         else:
             payload = None
