@@ -65,11 +65,9 @@ class InsightVMAPI:
         self.processed_vulner_ids: Set[str] = set()
 
     async def get_assets(self, start_time: Optional[datetime.datetime] = None) -> AsyncIterable[list]:
-        logging.info(f'Start getting assets where start_time: {start_time}')
         cursor = None
         while True:
             res = await self._make_get_assets_request(cursor, start_time=start_time)
-            logging.info(f'start_time: {start_time}')
             assets = res['data']
             logging.info(f'Assets found: {len(assets)}')
             yield assets
@@ -108,7 +106,6 @@ class InsightVMAPI:
         filtered_res = res
         filtered_res["data"] = delay_res
 
-        # res = res if res else {}
         return filtered_res
 
     async def get_all_vulners(self) -> dict:
