@@ -91,13 +91,11 @@ class InsightVMAPI:
         if isinstance(start_time, datetime.datetime):
             date = start_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + 'Z'
             payload = {
-                'asset': f'last_scan_end > {date}'
+                'asset': f'{CURRENT_TIME - datetime.timedelta(minutes=int(DELAY))} > last_scan_end > {date}'
             }
         else:
             payload = None
         res = await self._make_api_request(method=method, endpoint=endpoint, params=params, payload=payload)
-        logging.info(f'response: {res}')
-        # last_scan_end < {CURRENT_TIME - datetime.timedelta(minutes=int(DELAY))}
         res = res if res else {}
         return res
 
