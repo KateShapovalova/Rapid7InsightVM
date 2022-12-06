@@ -10,7 +10,7 @@ import os
 DELAY = os.environ.get('Delay', "60")
 SHIFT_START_TIME = os.environ.get('ShiftStartTime', "60")
 #TODO: убрать после дебага
-CURRENT_TIME = datetime.datetime.now() - datetime.timedelta(days=365)
+CURRENT_TIME = datetime.datetime.now() - datetime.timedelta(days=366)
 
 
 class StateManagerAsync:
