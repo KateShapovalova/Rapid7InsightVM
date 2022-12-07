@@ -5,13 +5,6 @@ from typing import Optional
 import datetime
 from dateutil.parser import parse as parse_date
 import logging
-import os
-from pytz import timezone
-
-
-DELAY = os.environ.get('Delay', "60")
-SHIFT_START_TIME = os.environ.get('ShiftStartTime', "60")
-CURRENT_TIME = timezone('UTC').localize(datetime.datetime.now())
 
 
 class StateManagerAsync:
@@ -52,16 +45,15 @@ class StateManagerAsync:
             except ResourceNotFoundError:
                 return None
 
-    async def get_last_date_from_storage(self) -> Optional[datetime.datetime]:
+    async def get_last_date_from_storage(self, current_time, shift_start_time, end_time) -> Optional[datetime.datetime]:
         s = await self.get()
         try:
             date = parse_date(s)
-            if date < CURRENT_TIME - datetime.timedelta(days=7):
+            if date < current_time - datetime.timedelta(days=7):
                 logging.info(f'The last saved time was long ago, trying to get events for the last week.')
-                date = CURRENT_TIME - datetime.timedelta(days=7)
+                date = current_time - datetime.timedelta(days=7)
         except Exception:
-            date = CURRENT_TIME - (
-                        datetime.timedelta(minutes=int(DELAY)) + datetime.timedelta(minutes=int(SHIFT_START_TIME)))
+            date = end_time - datetime.timedelta(minutes=int(shift_start_time))
             logging.info(f'There is no last time point, trying to get events for recent time.')
         return date
 
